@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'java-11'
+        maven 'maven'
+    }
+    stages {
+        stage('git-checkout'){
+            steps{
+                git branch: 'master', url:'https://github.com/pavan472gkt/vidur.git'
+            }
+        }
+        stage('compile'){
+            steps{
+                sh 'mvn compile'
+            }
+        }
+        stage('packaging'){
+            steps{
+                sh 'mvn clean install'
+            }
+        }
+        stage('build'){
+            steps{
+                sh 'docker build -t pavan472gkt/project .'
+            }
+        }
+        stage('containerization'){
+            steps{
+                sh 'docker run -it -d --name c1 -p 9000:8080 pavan472gkt/project'
+            }
+        }
+    }
